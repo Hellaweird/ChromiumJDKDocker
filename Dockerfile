@@ -41,6 +41,7 @@ RUN 				apt-get update -y \
 						&& useradd -d /home/container -m container
 # Pterodactyl user setup
 RUN useradd -d /home/container -m container
+
 USER container
 ENV USER=container HOME=/home/container
 WORKDIR /home/container
