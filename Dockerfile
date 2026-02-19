@@ -36,6 +36,9 @@ RUN apt-get update && apt-get install -y \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
+RUN 				apt-get update -y \
+						&& apt-get install -y lsof curl ca-certificates openssl git tar sqlite3 fontconfig libfreetype6 tzdata iproute2 libstdc++6 \
+						&& useradd -d /home/container -m container
 # Pterodactyl user setup
 RUN useradd -d /home/container -m container
 USER container
@@ -43,5 +46,5 @@ ENV USER=container HOME=/home/container
 WORKDIR /home/container
 
 # Note: Pterodactyl provides the entrypoint usually, but we can specify one if needed
-# COPY ./entrypoint.sh /entrypoint.sh
-# CMD ["/bin/bash", "/entrypoint.sh"]
+COPY        ./../entrypoint.sh /entrypoint.sh
+CMD         [ "/bin/bash", "/entrypoint.sh" ]
