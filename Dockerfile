@@ -1,6 +1,5 @@
 FROM eclipse-temurin:25-jdk
 
-# Install Chromium dependencies
 RUN apt-get update -y \
     && apt-get install -y \
         lsof curl ca-certificates openssl git tar sqlite3 fontconfig libfreetype6 tzdata iproute2 libstdc++6 \
@@ -10,11 +9,11 @@ RUN apt-get update -y \
     && rm -rf /var/lib/apt/lists/* \
     && useradd -d /home/container -m container
 
-USER container
-ENV USER=container HOME=/home/container
-WORKDIR /home/container
-
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh && chown container:container /entrypoint.sh
 
 USER container
+ENV USER=container HOME=/home/container
+WORKDIR /home/container
+
+CMD [ "/bin/bash", "/entrypoint.sh" ]
