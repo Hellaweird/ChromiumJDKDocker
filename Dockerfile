@@ -1,16 +1,26 @@
-FROM eclipse-temurin:25-jdk-jammy
+# Use the official Microsoft Playwright image as a base
+# This contains all the OS-level dependencies (libgbm, libnss3, etc.)
+FROM mcr.microsoft.com/playwright:v1.49.1-jammy
 
-RUN apt-get update && apt-get install -y curl && \
-    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs && \
-    npx playwright install-deps && \
-    apt-get purge -y nodejs && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
+# Update and install basic tools needed for Pterodactyl
+RUN apt-get update && apt-get install -y \
+    curl \
+    ca-certificates \
+    openssl \
+    git \
+    sqlite3 \
+    fontconfig \
+    tzdata \
+    iproute2 \
+    libsqlite3-dev
 
+# Create the Pterodactyl user
 RUN useradd -d /home/container -m container
+
 USER container
 ENV USER=container HOME=/home/container
 WORKDIR /home/container
 
-# Pterodactyl default entrypoint
+# Copy the entrypoint script (provided by Pterodactyl)
 COPY ./entrypoint.sh /entrypoint.sh
 CMD ["/bin/bash", "/entrypoint.sh"]

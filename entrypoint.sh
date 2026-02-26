@@ -1,23 +1,18 @@
 #!/bin/bash
 
-TZ=${TZ:-UTC}
-export TZ
+# Navigate to the container directory
+cd /home/container || exit 1
 
+# Make internal Docker IP available to processes
 INTERNAL_IP=$(ip route get 1 | awk '{print $(NF-2);exit}')
 export INTERNAL_IP
 
-cd /home/container || exit 1
+# Replace environment variables in the startup command
+# This takes the "Startup Command" from the Pterodactyl UI and executes it
+MODIFIED_STARTUP=$(echo -e "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/\}/g')
 
-rm -f /tmp/.X99-lock
-Xvfb :99 -screen 0 1280x1024x24 +extension GLX +render -noreset >> /home/container/xvfb.log 2>&1 &
-sleep 2
-export DISPLAY=:99
+echo -e "\033[1;33m--- Starting Pterodactyl Server ---\033[0m"
+echo -e "\033[1;33mWorking Directory: /home/container\033[0m"
 
-printf "\033[1m\033[33mcontainer@pterodactyl~ \033[0mjava -version\n"
-java -version
-
-PARSED=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g' | eval echo "$(cat -)")
-
-printf "\033[1m\033[33mcontainer@pterodactyl~ \033[0m%s\n" "$PARSED"
-# shellcheck disable=SC2086
-exec env ${PARSED}
+# Run the modified startup command
+eval "${MODIFIED_STARTUP}"
