@@ -1,5 +1,5 @@
 # Use the official Microsoft Playwright image as a base
-FROM mcr.microsoft.com/playwright:v1.49.1-jammy
+FROM mcr.microsoft.com/playwright:v1.58.2-jammy
 
 # PREVENT THE TIMEZONE HANG
 ENV DEBIAN_FRONTEND=noninteractive
