@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jdk-jammy
+FROM eclipse-temurin:25-jdk
 
 # 1. Update and install basic tools
 RUN apt-get update && apt-get install -y curl
